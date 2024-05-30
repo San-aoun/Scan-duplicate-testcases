@@ -1,0 +1,18 @@
+{
+  "name": "excel-duplicate-scanner",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "npx ts-node scanDuplicates.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@types/node": "^20.12.13",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.4.5",
+    "xlsx": "^0.18.5"
+  },
+  "description": ""
+}
