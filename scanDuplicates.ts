@@ -1,8 +1,14 @@
 // Import necessary modules
 import * as XLSX from 'xlsx';
 
-// Function to read titles from an Excel file
-function readTitlesFromExcel(filePath: string): string[] {
+// Interface to hold title with its corresponding ID
+interface TitleWithID {
+    id: string;
+    title: string;
+}
+
+// Function to read titles and IDs from an Excel file
+function readTitlesFromExcel(filePath: string): TitleWithID[] {
     const workbook = XLSX.readFile(filePath);
     const sheetName = workbook.SheetNames[0];
     const worksheet = workbook.Sheets[sheetName];
@@ -11,26 +17,31 @@ function readTitlesFromExcel(filePath: string): string[] {
     // Log the entire data read from the worksheet
     console.log(`Data from ${filePath}:`, data);
 
-    // Assuming titles are in a column named "title"
+    // Assuming titles are in a column named "title" and IDs in a column named "id"
     const headerRow = data[0];
+    const idIndex = headerRow.indexOf("Id");
     const titleIndex = headerRow.indexOf("title");
-    if (titleIndex === -1) {
-        throw new Error("Title column not found");
+    if (idIndex === -1 || titleIndex === -1) {
+        throw new Error("ID or Title column not found");
     }
 
-    // Extract titles and log them
-    const titles = data.slice(1).map(row => row[titleIndex]).filter(title => title !== undefined && title !== null);
-    console.log(`Titles from ${filePath}:`, titles);
+    // Extract titles and IDs, and log them
+    const titlesWithID = data.slice(1).map(row => ({
+        id: row[idIndex],
+        title: row[titleIndex]
+    })).filter(item => item.id !== undefined && item.title !== undefined);
 
-    return titles;
+    console.log(`Titles with IDs from ${filePath}:`, titlesWithID);
+
+    return titlesWithID;
 }
 
-// Function to scan for duplicate titles
-function scanForDuplicates(titles: string[], keywords: string[]): { [key: string]: string[] } {
-    const duplicates: { [key: string]: string[] } = {};
+// Function to scan for duplicate titles using keywords
+function scanForDuplicates(titlesWithID: TitleWithID[], keywords: string[]): { [key: string]: TitleWithID[] } {
+    const duplicates: { [key: string]: TitleWithID[] } = {};
 
     keywords.forEach(keyword => {
-        const matchedTitles = titles.filter(title => title.includes(keyword));
+        const matchedTitles = titlesWithID.filter(item => item.title.includes(keyword));
         if (matchedTitles.length > 1) {
             duplicates[keyword] = matchedTitles;
         }
@@ -42,22 +53,22 @@ function scanForDuplicates(titles: string[], keywords: string[]): { [key: string
 // Main function to execute the program
 function main() {
     // Keywords to scan for
-    const keywords: string[] = ['home', 'signin', 'login', 'web site', 'page']; // replace with actual keywords
+    const keywords: string[] = ['home', 'signin', 'login']; // replace with actual keywords
 
-    // Read titles from both Excel files
-    const titles1 = readTitlesFromExcel('./login.xlsx');
-    const titles2 = readTitlesFromExcel('./login2.xlsx');
+    // Read titles and IDs from both Excel files
+    const titlesWithID1 = readTitlesFromExcel('./login.xlsx');
+    const titlesWithID2 = readTitlesFromExcel('./login2.xlsx');
 
-    // Combine titles from both files
-    const allTitles = [...titles1, ...titles2];
+    // Combine titles and IDs from both files
+    const allTitlesWithID = [...titlesWithID1, ...titlesWithID2];
 
-    // Log combined titles
-    console.log('Combined Titles:', allTitles);
+    // Log combined titles and IDs
+    console.log('Combined Titles with IDs:', allTitlesWithID);
 
-    // Scan for duplicates
-    const duplicates = scanForDuplicates(allTitles, keywords);
+    // Scan for duplicates using keywords
+    const duplicates = scanForDuplicates(allTitlesWithID, keywords);
 
-    // Output the results
+    // Log the results of the keyword scan
     console.log('Duplicate Titles:', duplicates);
 }
 
