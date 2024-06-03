@@ -50,6 +50,18 @@ function scanForDuplicates(titlesWithID: TitleWithID[], keywords: string[]): { [
     return duplicates;
 }
 
+// Function to write duplicate titles to an Excel file
+function writeDuplicatesToExcel(duplicates: { [key: string]: TitleWithID[] }, filePath: string): void {
+    const workbook = XLSX.utils.book_new();
+
+    Object.keys(duplicates).forEach((keyword) => {
+        const worksheet = XLSX.utils.json_to_sheet(duplicates[keyword]);
+        XLSX.utils.book_append_sheet(workbook, worksheet, keyword);
+    });
+
+    XLSX.writeFile(workbook, filePath);
+}
+
 // Main function to execute the program
 function main() {
     // Keywords to scan for
@@ -70,6 +82,8 @@ function main() {
 
     // Log the results of the keyword scan
     console.log('Duplicate Titles:', duplicates);
+
+    writeDuplicatesToExcel(duplicates, './duplicates_Result.xlsx')
 }
 
 // Run the main function
