@@ -29,3 +29,6 @@ npx ts-node scanDuplicates.ts
 
 - Add more keywords to the `keywords` array in `scanDuplicates.ts` to scan for additional patterns.
 - Refine the keyword matching logic in `scanForDuplicates` function to use regex for more complex patterns.
+
+![image](https://github.com/San-aoun/https---github.com-San-aoun-Scan-duplicate-test-case/assets/39735390/c6ca7d94-a50d-48ef-bfd0-f966a145b99f)
+
