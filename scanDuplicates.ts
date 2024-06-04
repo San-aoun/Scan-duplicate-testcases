@@ -19,8 +19,8 @@ function readTitlesFromExcel(filePath: string): TitleWithID[] {
 
     // Assuming titles are in a column named "title" and IDs in a column named "id"
     const headerRow = data[0];
-    const idIndex = headerRow.indexOf("Id");
-    const titleIndex = headerRow.indexOf("title");
+    const idIndex = headerRow.indexOf("ID");
+    const titleIndex = headerRow.indexOf("Title");
     if (idIndex === -1 || titleIndex === -1) {
         throw new Error("ID or Title column not found");
     }
@@ -59,20 +59,39 @@ function writeDuplicatesToExcel(duplicates: { [key: string]: TitleWithID[] }, fi
         XLSX.utils.book_append_sheet(workbook, worksheet, keyword);
     });
 
-    XLSX.writeFile(workbook, filePath);
+    const date = new Date();
+    const formattedDate = `${String(date.getDate()).padStart(2, '0')}${String(date.getMonth() + 1).padStart(2, '0')}${String(date.getFullYear()).slice(-2)}`;
+    const formattedTime = `${String(date.getHours()).padStart(2, '0')}${String(date.getMinutes()).padStart(2, '0')}${String(date.getSeconds()).padStart(2, '0')}`;
+    const fileName = `Duplicate_result_${formattedDate}_${formattedTime}.xlsx`
+
+    XLSX.writeFile(workbook, fileName);
 }
 
 // Main function to execute the program
 function main() {
     // Keywords to scan for
-    const keywords: string[] = ['home', 'signin', 'login']; // replace with actual keywords
+    const keywords: string[] = [
+        'homepage', 
+        'Workspace', 
+        'Login', 
+        'Layouts', 
+        'Autosuggest', 
+        'Context', 
+        'Create', 
+        'health'
+    ]; // replace with actual keywords
 
+    //-------------More Than 1 files --------------
     // Read titles and IDs from both Excel files
-    const titlesWithID1 = readTitlesFromExcel('./login.xlsx');
-    const titlesWithID2 = readTitlesFromExcel('./login2.xlsx');
+    // const titlesWithID1 = readTitlesFromExcel('./login.xlsx');
+    // const titlesWithID2 = readTitlesFromExcel('./login2.xlsx');
+    // Note : Combine titles and IDs from both files
+    //const allTitlesWithID = [...titlesWithID1, ...titlesWithID2];
+    
 
-    // Combine titles and IDs from both files
-    const allTitlesWithID = [...titlesWithID1, ...titlesWithID2];
+    //------------- 1 file --------------
+    const titlesWithID1 = readTitlesFromExcel('./eikon_framework.xlsx');
+    const allTitlesWithID = [...titlesWithID1];
 
     // Log combined titles and IDs
     console.log('Combined Titles with IDs:', allTitlesWithID);
